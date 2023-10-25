@@ -11,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection setup
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rin8xcl.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -25,19 +26,21 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const addEmailCollection = client.db('getGlobal').collection('email');
 
     // 1. POST to addToys
-    app.post('/addemail', async (req, res) => {
+    app.post('/email', async (req, res) => {
       const addemail = req.body;
-   //   body.createdAt = new Date()
       const result = await addEmailCollection.insertOne(addemail);
       res.send(result);
     });
 
-
+app.get('/email',async(req,res)=>{
+    const result=await addEmailCollection.find().toArray();
+    res.send(result)
+})
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 });
     console.log('Pinged your deployment. You successfully connected to MongoDB!');
@@ -50,7 +53,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-  res.send('edukids server is running');
+  res.send('getglobal server is running');
 });
 
 app.listen(port, () => {
